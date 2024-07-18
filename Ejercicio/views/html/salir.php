@@ -1,5 +1,5 @@
 <?php
 
 session_destroy();
-header('Location:.././zindex.php');
+header('Location:.././index.php');
 exit();

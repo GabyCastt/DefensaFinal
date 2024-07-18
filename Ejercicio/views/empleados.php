@@ -3,7 +3,7 @@ require_once '../controllers/empleados.controller.php';
 
 $empleadosController = new EmpleadosController();
 
-// Manejar la inserción de empleados
+// Maneja la inserción de empleados
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'insertar') {
     $nombre = $_POST['nombre'];
     $apellido = $_POST['apellido'];
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
     }
 }
 
-// Manejar la edición de empleados
+// Maneja la edición de empleados
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'editar') {
     $empleado_id = $_POST['empleado_id'];
     $nombre = $_POST['nombre'];
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
     }
 }
 
-// Manejar la eliminación de un empleado
+// Maneja la eliminación de un empleado
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['eliminar'])) {
     $empleado_id = $_GET['eliminar'];
     if ($empleadosController->eliminarEmpleado($empleado_id)) {
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['eliminar'])) {
     }
 }
 
-// Listar todos los empleados
+// Lista todos los empleados
 $empleados = $empleadosController->listarEmpleados();
 ?>
 
@@ -217,7 +217,7 @@ $empleados = $empleadosController->listarEmpleados();
                 </tbody>
             </table>
 
-            <!-- Modales Editar Empleado -->
+            <!-- Modal Editar Empleado -->
             <?php foreach ($empleados as $empleado) : ?>
                 <div class="modal fade" id="editarEmpleadoModal_<?php echo $empleado['empleado_id']; ?>" tabindex="-1" aria-labelledby="editarEmpleadoModalLabel_<?php echo $empleado['empleado_id']; ?>" aria-hidden="true">
                     <div class="modal-dialog">

@@ -7,11 +7,11 @@ $asignacionesController = new AsignacionesController();
 $proyectosController = new ProyectosController();
 $empleadosController = new EmpleadosController();
 
-// Listar proyectos y empleados para los formularios
+// Lista proyectos y empleados para los formularios
 $proyectos = $proyectosController->listarProyectos();
 $empleados = $empleadosController->listarEmpleados();
 
-// Manejar la inserción de una nueva asignación
+// Maneja la inserción de una nueva asignación
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     if ($_POST['accion'] === 'insertar') {
         $proyecto_id = $_POST['proyecto_id'];
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     }
 }
 
-// Manejar la eliminación de una asignación
+// Maneja la eliminación de una asignación
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['eliminar'])) {
     $asignacion_id = $_GET['eliminar'];
 
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['eliminar'])) {
     }
 }
 
-// Listar todas las asignaciones
+// Lista todas las asignaciones
 $asignaciones = $asignacionesController->listarAsignaciones();
 ?>
 

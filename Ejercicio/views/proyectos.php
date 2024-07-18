@@ -3,7 +3,7 @@ require_once '../controllers/proyectos.controller.php';
 
 $proyectosController = new ProyectosController();
 
-// Manejar la inserción de un nuevo proyecto
+// Maneja la inserción de un nuevo proyecto
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     if ($_POST['accion'] === 'insertar') {
         $nombre = $_POST['nombre'];
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     }
 }
 
-// Manejar la eliminación de un proyecto
+// Maneja la eliminación de un proyecto
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['eliminar'])) {
     $proyecto_id = $_GET['eliminar'];
 
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['eliminar'])) {
     }
 }
 
-// Listar todos los proyectos
+// Lista todos los proyectos
 $proyectos = $proyectosController->listarProyectos();
 ?>
 
@@ -253,12 +253,12 @@ $proyectos = $proyectosController->listarProyectos();
                     $('#fecha_fin_editar').val(proyectoEditar.fecha_fin);
                 });
 
-                // Limpiar datos del formulario al cerrar modal
+                // Limpia datos del formulario al cerrar modal
                 $('#editarProyectoModal').on('hidden.bs.modal', function() {
                     $('#formEditarProyecto')[0].reset();
                 });
 
-                // Inicializar Flatpickr para los campos de fecha
+                // Inicializa Flatpickr para los campos de fecha
                 flatpickr("input[type=date]", {
                     dateFormat: "Y-m-d"
                 });
