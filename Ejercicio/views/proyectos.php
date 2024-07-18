@@ -53,6 +53,7 @@ $proyectos = $proyectosController->listarProyectos();
     <?php require_once('./html/head.php') ?>
     <link href="../public/lib/calendar/lib/main.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
@@ -89,38 +90,6 @@ $proyectos = $proyectosController->listarProyectos();
             font-size: 18px;
             margin-bottom: 20px;
         }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table,
-        th,
-        td {
-            border: 1px solid black;
-        }
-
-        th,
-        td {
-            padding: 8px;
-            text-align: left;
-        }
-
-        form {
-            margin-bottom: 20px;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            padding: 8px;
-            margin: 4px 0;
-        }
-
-        button {
-            padding: 10px 20px;
-        }
     </style>
 </head>
 
@@ -137,39 +106,33 @@ $proyectos = $proyectosController->listarProyectos();
         <?php require_once('./html/header.php') ?>
         <!-- Navbar End -->
 
-        <div class="container mt-5">
+        <div class="container-fluid pt-4 px-4">
             <div class="welcome-hero">
                 <div>
-                    <h1>Gestión de Proyectos</h1>
-                    <p>Administra de manera eficiente</p>
+                    <h1 class="display-3 fw-bold">Gestión de Proyectos</h1>
+                    <p class="lead">Administra de manera eficiente</p>
                 </div>
             </div>
 
             <div class="container mt-5">
                 <?php if (isset($mensaje)) : ?>
-                    <p><?php echo $mensaje; ?></p>
+                    <script>
+                        Swal.fire({
+                            title: '<?php echo $mensaje; ?>',
+                            icon: '<?php echo strpos($mensaje, "Error") === false ? "success" : "error"; ?>',
+                            confirmButtonText: 'Ok'
+                        });
+                    </script>
                 <?php endif; ?>
 
-                <form method="POST">
-                    <h2>Insertar Proyecto</h2>
-                    <input type="hidden" name="accion" value="insertar">
-                    <label>Nombre:</label>
-                    <input type="text" name="nombre" required>
-                    <br>
-                    <label>Descripción:</label>
-                    <textarea name="descripcion" required></textarea>
-                    <br>
-                    <label>Fecha de Inicio:</label>
-                    <input type="date" name="fecha_inicio" required>
-                    <br>
-                    <label>Fecha de Fin:</label>
-                    <input type="date" name="fecha_fin">
-                    <br>
-                    <button type="submit">Insertar</button>
-                </form>
+                <!-- Botón para abrir modal de inserción -->
+
+                <button type="button" class="btn mb-3" style="background-color: #4a90e2; color: white;" data-bs-toggle="modal" data-bs-target="#nuevoProyectoModal">
+                    Nuevo Proyecto
+                </button>
 
                 <h2>Lista de Proyectos</h2>
-                <table>
+                <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -197,6 +160,40 @@ $proyectos = $proyectosController->listarProyectos();
                     </tbody>
                 </table>
 
+                <!-- Modal Nuevo Proyecto -->
+                <div class="modal fade" id="nuevoProyectoModal" tabindex="-1" aria-labelledby="nuevoProyectoModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="nuevoProyectoModalLabel">Insertar Proyecto</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST">
+                                    <input type="hidden" name="accion" value="insertar">
+                                    <div class="mb-3">
+                                        <label for="nombre" class="form-label">Nombre:</label>
+                                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="descripcion" class="form-label">Descripción:</label>
+                                        <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fecha_inicio" class="form-label">Fecha de Inicio:</label>
+                                        <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fecha_fin" class="form-label">Fecha de Fin:</label>
+                                        <input type="date" class="form-control" id="fecha_fin" name="fecha_fin">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Insertar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Modal Editar Proyecto -->
                 <div class="modal fade" id="editarProyectoModal" tabindex="-1" aria-labelledby="editarProyectoModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
@@ -209,17 +206,22 @@ $proyectos = $proyectosController->listarProyectos();
                                 <div class="modal-body">
                                     <input type="hidden" name="accion" value="editar">
                                     <input type="hidden" id="proyecto_id_editar" name="proyecto_id">
-                                    <label>Nombre:</label>
-                                    <input type="text" id="nombre_editar" name="nombre" required>
-                                    <br>
-                                    <label>Descripción:</label>
-                                    <textarea id="descripcion_editar" name="descripcion" required></textarea>
-                                    <br>
-                                    <label>Fecha de Inicio:</label>
-                                    <input type="date" id="fecha_inicio_editar" name="fecha_inicio" required>
-                                    <br>
-                                    <label>Fecha de Fin:</label>
-                                    <input type="date" id="fecha_fin_editar" name="fecha_fin">
+                                    <div class="mb-3">
+                                        <label for="nombre_editar" class="form-label">Nombre:</label>
+                                        <input type="text" class="form-control" id="nombre_editar" name="nombre" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="descripcion_editar" class="form-label">Descripción:</label>
+                                        <textarea class="form-control" id="descripcion_editar" name="descripcion" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fecha_inicio_editar" class="form-label">Fecha de Inicio:</label>
+                                        <input type="date" class="form-control" id="fecha_inicio_editar" name="fecha_inicio" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fecha_fin_editar" class="form-label">Fecha de Fin:</label>
+                                        <input type="date" class="form-control" id="fecha_fin_editar" name="fecha_fin">
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -229,8 +231,6 @@ $proyectos = $proyectosController->listarProyectos();
                         </div>
                     </div>
                 </div>
-                <!-- Fin Modal Editar Proyecto -->
-
             </div>
 
             <!-- Footer Start -->
@@ -240,9 +240,9 @@ $proyectos = $proyectosController->listarProyectos();
         <!-- Content End -->
 
         <script>
-            $(document).ready(function () {
+            $(document).ready(function() {
                 // Obtener datos del proyecto para editar
-                $('.editar-proyecto').click(function () {
+                $('.editar-proyecto').click(function() {
                     var proyectoId = $(this).data('proyecto-id');
                     var proyecto = <?php echo json_encode($proyectos); ?>;
                     var proyectoEditar = proyecto.find(p => p.proyecto_id == proyectoId);
@@ -254,8 +254,13 @@ $proyectos = $proyectosController->listarProyectos();
                 });
 
                 // Limpiar datos del formulario al cerrar modal
-                $('#editarProyectoModal').on('hidden.bs.modal', function () {
+                $('#editarProyectoModal').on('hidden.bs.modal', function() {
                     $('#formEditarProyecto')[0].reset();
+                });
+
+                // Inicializar Flatpickr para los campos de fecha
+                flatpickr("input[type=date]", {
+                    dateFormat: "Y-m-d"
                 });
             });
         </script>

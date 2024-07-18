@@ -9,19 +9,19 @@
         <ul class="nav flex-column w-100 mt-4">
             <li class="nav-item w-100">
                 <a href="./proyectos.php" class="nav-link text-light py-3 px-4 w-100 d-flex align-items-center">
-                    <i class="fas fa-user-friends me-3 fs-5"></i>
+                    <i class="fas fa-project-diagram me-3 fs-5"></i>
                     <span>Proyectos</span>
                 </a>
             </li>
             <li class="nav-item w-100">
                 <a href="./empleados.php" class="nav-link text-light py-3 px-4 w-100 d-flex align-items-center">
-                    <i class="fas fa-users me-3 fs-5"></i>
+                    <i class="fas fa-user-tie me-3 fs-5"></i>
                     <span>Empleados</span>
                 </a>
             </li>
             <li class="nav-item w-100">
                 <a href="./asignaciones.php" class="nav-link text-light py-3 px-4 w-100 d-flex align-items-center">
-                    <i class="fas fa-users me-3 fs-5"></i>
+                    <i class="fas fa-tasks me-3 fs-5"></i>
                     <span>Asignaciones</span>
                 </a>
             </li>

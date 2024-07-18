@@ -157,7 +157,7 @@ $empleados = $empleadosController->listarEmpleados();
             <?php endif; ?>
 
             <!-- Botón para abrir modal de inserción -->
-            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#nuevoEmpleadoModal">
+            <button type="button" class="btn mb-3 mt-4" style="background-color: #4a90e2; border-color: white; color: #ffffff; margin-top: 30px;" data-bs-toggle="modal" data-bs-target="#nuevoEmpleadoModal">
                 Nuevo Empleado
             </button>
 

@@ -20,6 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
 
         if ($asignacionesController->insertarAsignacion($proyecto_id, $empleado_id, $fecha_asignacion)) {
             $mensaje = "Asignación insertada correctamente.";
+            echo "<script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var modal = bootstrap.Modal.getInstance(document.getElementById('insertarModal'));
+                        modal.hide();
+                    });
+                  </script>";
         } else {
             $mensaje = "Error al insertar la asignación.";
         }
@@ -85,137 +91,144 @@ $asignaciones = $asignacionesController->listarAsignaciones();
             font-size: 18px;
             margin-bottom: 20px;
         }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table,
-        th,
-        td {
-            border: 1px solid black;
-        }
-
-        th,
-        td {
-            padding: 8px;
-            text-align: left;
-        }
-
-        form {
-            margin-bottom: 20px;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            padding: 8px;
-            margin: 4px 0;
-        }
-
-        button {
-            padding: 10px 20px;
-        }
     </style>
 </head>
 
 <body>
-    <!-- Sidebar Start -->
-    <?php require_once('./html/menu.php') ?>
-    <!-- Sidebar End -->
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Cargando...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
 
-    <!-- Content Start -->
-    <div class="content">
-        <!-- Navbar Start -->
-        <?php require_once('./html/header.php') ?>
-        <!-- Navbar End -->
+        <!-- Sidebar Start -->
+        <?php require_once('./html/menu.php') ?>
+        <!-- Sidebar End -->
 
-        <div class="container mt-5">
-            <div class="welcome-hero">
-                <div>
-                    <h1>Gestión de Asignación a Proyectos</h1>
-                    <p>Administra de manera eficiente</p>
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <?php require_once('./html/header.php') ?>
+            <!-- Navbar End -->
+
+            <div class="container-fluid pt-4 px-4">
+                <div class="welcome-hero">
+                    <h1 class="display-3 fw-bold">Gestión de Asignación a Proyectos</h1>
+                    <p class="lead">Administra de manera eficiente</p>
+                </div>
+                <div class="container mt-5">
+                    <!-- Mensaje de éxito o error -->
+                    <?php if (isset($mensaje)) : ?>
+                        <script>
+                            Swal.fire({
+                                title: '<?php echo $mensaje; ?>',
+                                icon: '<?php echo strpos($mensaje, "Error") === false ? "success" : "error"; ?>',
+                                confirmButtonText: 'Ok'
+                            });
+                        </script>
+                    <?php endif; ?>
+
+                    <!-- Botón para abrir el modal -->
+                    <button type="button" class="btn mb-3" style="background-color: #4a90e2; color: white;" data-bs-toggle="modal" data-bs-target="#insertarModal">
+                        Asignar Proyectos
+                    </button>
+
+                    <!-- Lista de Asignaciones -->
+                    <h2>Lista de Asignaciones</h2>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Proyecto</th>
+                                <th>Empleado</th>
+                                <th>Fecha de Asignación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($asignaciones as $asignacion) : ?>
+                                <tr>
+                                    <td><?php echo $asignacion['asignacion_id']; ?></td>
+                                    <td><?php echo $asignacion['nombre_proyecto']; ?></td>
+                                    <td><?php echo $asignacion['nombre_empleado']; ?></td>
+                                    <td><?php echo $asignacion['fecha_asignacion']; ?></td>
+                                    <td>
+                                        <!-- Botón para eliminar -->
+                                        <a href="asignaciones.php?eliminar=<?php echo $asignacion['asignacion_id']; ?>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar esta asignación?')">Eliminar</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Mensaje de éxito o error -->
-            <?php if (isset($mensaje)): ?>
-                <script>
-                    Swal.fire({
-                        title: '<?php echo $mensaje; ?>',
-                        icon: '<?php echo strpos($mensaje, "Error") === false ? "success" : "error"; ?>',
-                        confirmButtonText: 'Ok'
-                    });
-                </script>
-            <?php endif; ?>
+            <!-- Footer Start -->
+            <?php require_once('./html/footer.php') ?>
+            <!-- Footer End -->
+        </div>
+        <!-- Content End -->
 
-            <!-- Formulario para insertar asignación -->
-            <form method="POST">
-                <h2>Insertar Asignación</h2>
-                <input type="hidden" name="accion" value="insertar">
-                <label>Proyecto:</label>
-                <select name="proyecto_id" required>
-                    <option value="">Seleccione un proyecto</option>
-                    <?php foreach ($proyectos as $proyecto): ?>
-                        <option value="<?php echo $proyecto['proyecto_id']; ?>"><?php echo $proyecto['nombre']; ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <br>
-                <label>Empleado:</label>
-                <select name="empleado_id" required>
-                    <option value="">Seleccione un empleado</option>
-                    <?php foreach ($empleados as $empleado): ?>
-                        <option value="<?php echo $empleado['empleado_id']; ?>"><?php echo $empleado['nombre'] . ' ' . $empleado['apellido']; ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <br>
-                <label>Fecha de Asignación:</label>
-                <div class="custom-flatpickr">
-                    <input type="text" name="fecha_asignacion" id="fecha_asignacion" required>
+        <!-- Back to Top -->
+        <a href='#' class='btn btn-lg btn-primary btn-lg-square back-to-top'><i class='bi bi-arrow-up'></i></a>
+    </div>
+
+    <!-- Modal para insertar asignación -->
+    <div class="modal fade" id="insertarModal" tabindex="-1" aria-labelledby="insertarModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="insertarModalLabel">Insertar Nueva Asignación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <br>
-                <button type="submit" class="btn btn-success">Insertar</button>
-            </form>
-
-            <!-- Lista de Asignaciones -->
-            <h2>Lista de Asignaciones</h2>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Proyecto</th>
-                        <th>Empleado</th>
-                        <th>Fecha de Asignación</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($asignaciones as $asignacion): ?>
-                        <tr>
-                            <td><?php echo $asignacion['asignacion_id']; ?></td>
-                            <td><?php echo $asignacion['nombre_proyecto']; ?></td>
-                            <td><?php echo $asignacion['nombre_empleado']; ?></td>
-                            <td><?php echo $asignacion['fecha_asignacion']; ?></td>
-                            <td>
-                                <!-- Botón para eliminar -->
-                                <a href="asignaciones.php?eliminar=<?php echo $asignacion['asignacion_id']; ?>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar esta asignación?')">Eliminar</a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                <div class="modal-body">
+                    <form id="insertarForm" method="POST">
+                        <input type="hidden" name="accion" value="insertar">
+                        <div class="mb-3">
+                            <label for="proyecto_id" class="form-label">Proyecto:</label>
+                            <select id="proyecto_id" name="proyecto_id" class="form-select" required>
+                                <option value="">Seleccione un proyecto</option>
+                                <?php foreach ($proyectos as $proyecto) : ?>
+                                    <option value="<?php echo $proyecto['proyecto_id']; ?>"><?php echo $proyecto['nombre']; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="empleado_id" class="form-label">Empleado:</label>
+                            <select id="empleado_id" name="empleado_id" class="form-select" required>
+                                <option value="">Seleccione un empleado</option>
+                                <?php foreach ($empleados as $empleado) : ?>
+                                    <option value="<?php echo $empleado['empleado_id']; ?>"><?php echo $empleado['nombre'] . ' ' . $empleado['apellido']; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fecha_asignacion" class="form-label">Fecha de Asignación:</label>
+                            <div class="custom-flatpickr">
+                                <input type="text" id="fecha_asignacion" name="fecha_asignacion" class="form-control" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" form="insertarForm" class="btn btn-success">Insertar</button>
+                </div>
+            </div>
         </div>
     </div>
-    <!-- Content End -->
 
-        <!-- Footer Start -->
-        <?php require_once('./html/footer.php') ?>
-    <!-- Script para inicializar Flatpickr -->
+    <!-- JavaScript Libraries -->
+    <?php require_once('./html/scripts.php') ?>
     <script>
-        flatpickr('#fecha_asignacion', {
-            dateFormat: 'Y-m-d',
-            minDate: 'today'
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr('#fecha_asignacion', {
+                dateFormat: 'Y-m-d',
+                minDate: 'today'
+            });
         });
     </script>
 </body>
