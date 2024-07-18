@@ -1,45 +1,62 @@
 $(document).ready(function() {
-    // Manejar el envío del formulario para crear o editar un proyecto
-    $('form').on('submit', function(e) {
+    // Manejo del formulario para crear/editar proyectos
+    $('#proyectoForm').on('submit', function(e) {
         e.preventDefault();
-
         var formData = $(this).serialize();
-        var actionUrl = $(this).attr('action');
-
         $.ajax({
-            url: actionUrl,
+            url: $(this).attr('action'),
             type: 'POST',
             data: formData,
+            dataType: 'json',
             success: function(response) {
-                // Actualizar la lista de proyectos o mostrar un mensaje de éxito
-                alert('Proyecto guardado exitosamente.');
-                location.reload(); // Recargar la página para actualizar la lista de proyectos
+                if (response.status === 'success') {
+                    Swal.fire('Éxito', response.message, 'success').then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                } else {
+                    Swal.fire('Error', response.message, 'error');
+                }
             },
-            error: function() {
-                alert('Ocurrió un error al guardar el proyecto.');
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                Swal.fire('Error', 'Ocurrió un error al procesar la solicitud.', 'error');
             }
         });
     });
 
-    // Manejar la eliminación de proyectos
-    $('.btn-danger').on('click', function(e) {
+    // Manejo de eliminación de proyectos
+    $('.btn-eliminar').on('click', function(e) {
         e.preventDefault();
-
-        if (confirm('¿Está seguro de eliminar este proyecto?')) {
-            var deleteUrl = $(this).attr('href');
-
-            $.ajax({
-                url: deleteUrl,
-                type: 'GET',
-                success: function(response) {
-                    // Actualizar la lista de proyectos o mostrar un mensaje de éxito
-                    alert('Proyecto eliminado exitosamente.');
-                    location.reload(); // Recargar la página para actualizar la lista de proyectos
-                },
-                error: function() {
-                    alert('Ocurrió un error al eliminar el proyecto.');
-                }
-            });
-        }
+        var deleteUrl = $(this).attr('href');
+        Swal.fire({
+            title: '¿Está seguro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: deleteUrl,
+                    type: 'GET',
+                    success: function(response) {
+                        Swal.fire('Eliminado', 'El proyecto ha sido eliminado.', 'success').then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        Swal.fire('Error', 'Ocurrió un error al eliminar el proyecto.', 'error');
+                    }
+                });
+            }
+        });
     });
 });

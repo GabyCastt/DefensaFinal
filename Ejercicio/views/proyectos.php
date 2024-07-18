@@ -17,6 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['eliminar']) && isset($_GET['proyecto_id'])) {
         $controller->eliminarProyecto();
+    } elseif (isset($_GET['proyecto_id'])) {
+        // Cargar datos del proyecto si se proporciona un ID
+        $proyecto = $controller->obtenerProyecto($_GET['proyecto_id']);
     }
 }
 
@@ -61,27 +64,27 @@ $proyectos = $controller->listarProyectos();
         <!-- Formulario de creación/edición de proyectos -->
         <div class="container mt-5">
             <h2><?php echo isset($_GET['proyecto_id']) ? 'Editar Proyecto' : 'Crear Proyecto'; ?></h2>
-            <form id="proyectoForm" action="" method="POST">
-                <input type="hidden" name="proyecto_id" id="proyecto_id" value="<?php echo isset($_GET['proyecto_id']) ? $_GET['proyecto_id'] : ''; ?>">
+            <form id="proyectoForm" action="<?php echo isset($_GET['proyecto_id']) ? '../controllers/proyectos.controller.php?editar' : '../controllers/proyectos.controller.php?crear'; ?>" method="POST">
+                <input type="hidden" name="proyecto_id" id="proyecto_id" value="<?php echo isset($proyecto['proyecto_id']) ? $proyecto['proyecto_id'] : ''; ?>">
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre del Proyecto</label>
-                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    <input type="text" class="form-control" id="nombre" name="nombre" value="<?php echo isset($proyecto['nombre']) ? htmlspecialchars($proyecto['nombre']) : ''; ?>" required>
                 </div>
                 <div class="mb-3">
                     <label for="descripcion" class="form-label">Descripción</label>
-                    <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
+                    <textarea class="form-control" id="descripcion" name="descripcion" required><?php echo isset($proyecto['descripcion']) ? htmlspecialchars($proyecto['descripcion']) : ''; ?></textarea>
                 </div>
                 <div class="mb-3 custom-flatpickr">
                     <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
-                    <input type="text" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+                    <input type="text" class="form-control" id="fecha_inicio" name="fecha_inicio" value="<?php echo isset($proyecto['fecha_inicio']) ? $proyecto['fecha_inicio'] : ''; ?>" required>
                 </div>
                 <div class="mb-3 custom-flatpickr">
                     <label for="fecha_fin" class="form-label">Fecha de Fin</label>
-                    <input type="text" class="form-control" id="fecha_fin" name="fecha_fin">
+                    <input type="text" class="form-control" id="fecha_fin" name="fecha_fin" value="<?php echo isset($proyecto['fecha_fin']) ? $proyecto['fecha_fin'] : ''; ?>">
                 </div>
-                <?php if (isset($_GET['proyecto_id'])): ?>
+                <?php if (isset($_GET['proyecto_id'])) : ?>
                     <button type="submit" name="editar" class="btn btn-primary">Editar Proyecto</button>
-                <?php else: ?>
+                <?php else : ?>
                     <button type="submit" name="crear" class="btn btn-success">Crear Proyecto</button>
                 <?php endif; ?>
             </form>
@@ -102,7 +105,7 @@ $proyectos = $controller->listarProyectos();
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($proyectos as $proyecto): ?>
+                    <?php foreach ($proyectos as $proyecto) : ?>
                         <tr>
                             <td><?php echo htmlspecialchars($proyecto['proyecto_id']); ?></td>
                             <td><?php echo htmlspecialchars($proyecto['nombre']); ?></td>
@@ -111,7 +114,7 @@ $proyectos = $controller->listarProyectos();
                             <td><?php echo htmlspecialchars($proyecto['fecha_fin']); ?></td>
                             <td>
                                 <a href="?proyecto_id=<?php echo $proyecto['proyecto_id']; ?>" class="btn btn-sm btn-primary">Editar</a>
-                                <a href="?eliminar&proyecto_id=<?php echo $proyecto['proyecto_id']; ?>" class="btn btn-sm btn-danger btn-eliminar">Eliminar</a>
+                                <a href="../controllers/proyectos.controller.php?eliminar&proyecto_id=<?php echo $proyecto['proyecto_id']; ?>" class="btn btn-sm btn-danger btn-eliminar">Eliminar</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -136,28 +139,11 @@ $proyectos = $controller->listarProyectos();
             });
 
             // Cargar datos del proyecto si estamos en modo edición
-            <?php if (isset($_GET['proyecto_id'])): ?>
-            $.ajax({
-                url: '../controllers/proyectos.controller.php',
-                type: 'GET',
-                data: { proyecto_id: <?php echo $_GET['proyecto_id']; ?> },
-                dataType: 'json',
-                success: function(proyecto) {
-                    $('#proyecto_id').val(proyecto.proyecto_id);
-                    $('#nombre').val(proyecto.nombre);
-                    $('#descripcion').val(proyecto.descripcion);
-                    $('#fecha_inicio').val(proyecto.fecha_inicio);
-                    $('#fecha_fin').val(proyecto.fecha_fin);
-                },
-                error: function() {
-                    Swal.fire('Error', 'Error al cargar los datos del proyecto.', 'error');
-                }
-            });
-            <?php endif; ?>
-
-            // Cargar proyecto si se proporciona un ID
-            <?php if (isset($_GET['proyecto_id'])): ?>
-            cargarProyecto(<?php echo $_GET['proyecto_id']; ?>);
+            <?php if (isset($_GET['proyecto_id']) && isset($proyecto)) : ?>
+                $('#nombre').val('<?php echo htmlspecialchars($proyecto['nombre']); ?>');
+                $('#descripcion').val('<?php echo htmlspecialchars($proyecto['descripcion']); ?>');
+                $('#fecha_inicio').val('<?php echo htmlspecialchars($proyecto['fecha_inicio']); ?>');
+                $('#fecha_fin').val('<?php echo htmlspecialchars($proyecto['fecha_fin']); ?>');
             <?php endif; ?>
 
             // Manejar el envío del formulario para crear o editar un proyecto
@@ -165,10 +151,10 @@ $proyectos = $controller->listarProyectos();
                 e.preventDefault();
                 var formData = $(this).serialize();
                 $.ajax({
-                    url: '../controllers/proyectos.controller.php',
-                    type: 'POST', 
+                    url: $(this).attr('action'),
+                    type: 'POST',
                     data: formData,
-                    dataType: 'json', 
+                    dataType: 'json',
                     success: function(response) {
                         if (response.status === 'success') {
                             Swal.fire('Éxito', response.message, 'success').then((result) => {
@@ -180,12 +166,12 @@ $proyectos = $controller->listarProyectos();
                             Swal.fire('Error', response.message, 'error');
                         }
                     },
-                    error: function() {
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
                         Swal.fire('Error', 'Ocurrió un error al procesar la solicitud.', 'error');
                     }
                 });
             });
-
 
             // Manejar la eliminación de proyectos
             $('.btn-eliminar').on('click', function(e) {
@@ -212,7 +198,8 @@ $proyectos = $controller->listarProyectos();
                                     }
                                 });
                             },
-                            error: function() {
+                            error: function(xhr, status, error) {
+                                console.error(xhr.responseText);
                                 Swal.fire('Error', 'Ocurrió un error al eliminar el proyecto.', 'error');
                             }
                         });

@@ -9,10 +9,16 @@ class ProyectosModel {
     public function crearProyecto($nombre, $descripcion, $fecha_inicio, $fecha_fin) {
         $sql = "INSERT INTO Proyectos (nombre, descripcion, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_prepare($this->conn, $sql);
+        if (!$stmt) {
+            return "Error en la preparación de la consulta: " . mysqli_error($this->conn);
+        }
         mysqli_stmt_bind_param($stmt, "ssss", $nombre, $descripcion, $fecha_inicio, $fecha_fin);
         $resultado = mysqli_stmt_execute($stmt);
+        if (!$resultado) {
+            return "Error al ejecutar la consulta: " . mysqli_stmt_error($stmt);
+        }
         mysqli_stmt_close($stmt);
-        return $resultado;
+        return true;
     }
 
     public function obtenerProyecto($proyecto_id) {
