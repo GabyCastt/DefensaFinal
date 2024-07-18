@@ -30,5 +30,9 @@ class EmpleadosController
     {
         return $this->empleadosModel->listarEmpleados();
     }
+    public function listarEmpleadosPorProyecto($proyecto_id)
+    {
+        return $this->empleadosModel->listarEmpleadosPorProyecto($proyecto_id);
+    }
 }
 ?>

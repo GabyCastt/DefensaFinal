@@ -7,11 +7,11 @@ $asignacionesController = new AsignacionesController();
 $proyectosController = new ProyectosController();
 $empleadosController = new EmpleadosController();
 
-// Lista proyectos y empleados para los formularios
+// Listar proyectos y empleados para los formularios
 $proyectos = $proyectosController->listarProyectos();
 $empleados = $empleadosController->listarEmpleados();
 
-// Maneja la inserción de una nueva asignación
+// Manejar la inserción de una nueva asignación
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     if ($_POST['accion'] === 'insertar') {
         $proyecto_id = $_POST['proyecto_id'];
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     }
 }
 
-// Maneja la eliminación de una asignación
+// Manejar la eliminación de una asignación
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['eliminar'])) {
     $asignacion_id = $_GET['eliminar'];
 
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['eliminar'])) {
     }
 }
 
-// Lista todas las asignaciones
+// Listar todas las asignaciones
 $asignaciones = $asignacionesController->listarAsignaciones();
 ?>
 
@@ -144,6 +144,7 @@ $asignaciones = $asignacionesController->listarAsignaciones();
                                 <th>ID</th>
                                 <th>Proyecto</th>
                                 <th>Empleado</th>
+                                <th>Posición</th>
                                 <th>Fecha de Asignación</th>
                                 <th>Acciones</th>
                             </tr>
@@ -154,6 +155,7 @@ $asignaciones = $asignacionesController->listarAsignaciones();
                                     <td><?php echo $asignacion['asignacion_id']; ?></td>
                                     <td><?php echo $asignacion['nombre_proyecto']; ?></td>
                                     <td><?php echo $asignacion['nombre_empleado']; ?></td>
+                                    <td><?php echo $asignacion['posicion']; ?></td>
                                     <td><?php echo $asignacion['fecha_asignacion']; ?></td>
                                     <td>
                                         <!-- Botón para eliminar -->

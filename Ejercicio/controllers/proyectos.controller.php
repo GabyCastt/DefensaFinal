@@ -20,7 +20,6 @@ class ProyectosController
     {
         return $this->proyectosModel->editarProyecto($proyecto_id, $nombre, $descripcion, $fecha_inicio, $fecha_fin);
     }
-
     public function eliminarProyecto($proyecto_id)
     {
         return $this->proyectosModel->eliminarProyecto($proyecto_id);
@@ -31,4 +30,3 @@ class ProyectosController
         return $this->proyectosModel->listarProyectos();
     }
 }
-?>
