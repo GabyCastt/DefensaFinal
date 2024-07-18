@@ -1,6 +1,6 @@
 <div class="sidebar text-light vh-100" style="width: 240px; background-color: #124559;">
     <nav class="navbar flex-column align-items-start h-100">
-        <a href="../Dashboard/" class="navbar-brand p-4 w-100">
+        <a href="./zindex.php" class="navbar-brand p-4 w-100">
             <h3 class="text-white fw-bold fs-4">
                 <i class="fas fa-shield-alt me-1"></i>DEFENSA FINAL
             </h3>

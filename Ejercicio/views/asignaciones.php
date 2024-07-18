@@ -209,6 +209,8 @@ $asignaciones = $asignacionesController->listarAsignaciones();
     </div>
     <!-- Content End -->
 
+        <!-- Footer Start -->
+        <?php require_once('./html/footer.php') ?>
     <!-- Script para inicializar Flatpickr -->
     <script>
         flatpickr('#fecha_asignacion', {

@@ -21,7 +21,7 @@
         }
 
         .welcome-hero {
-            background-image: linear-gradient(to bottom, #34C759, #2E865F);
+            background-image: linear-gradient(to bottom, #cce3de, #cce3de);
             background-size: 100% 300px;
             background-position: 0% 100%;
             height: 300px;
@@ -59,7 +59,13 @@
         <!-- Navbar End -->
 
 
-
+        <div class="container mt-5">
+            <div class="welcome-hero">
+                <div>
+                    <h1>Gestión de Proyectos</h1>
+                    <p>Aplicaciones Distribuidas</p>
+                </div>
+            </div>
 
 
 
