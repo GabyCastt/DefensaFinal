@@ -35,7 +35,10 @@ class Asignaciones
 
     public function listarAsignaciones()
     {
-        $sql = "SELECT * FROM Asignaciones";
+        $sql = "SELECT a.asignacion_id, p.nombre as nombre_proyecto, e.nombre as nombre_empleado, a.fecha_asignacion 
+                FROM Asignaciones a
+                INNER JOIN Proyectos p ON a.proyecto_id = p.proyecto_id
+                INNER JOIN Empleados e ON a.empleado_id = e.empleado_id";
         $result = $this->conexion->query($sql);
         return $result->fetch_all(MYSQLI_ASSOC);
     }

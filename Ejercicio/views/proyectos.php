@@ -140,7 +140,7 @@ $proyectos = $proyectosController->listarProyectos();
         <div class="container mt-5">
             <div class="welcome-hero">
                 <div>
-                    <h1>Gestión de Asignación a Proyectos</h1>
+                    <h1>Gestión de Proyectos</h1>
                     <p>Administra de manera eficiente</p>
                 </div>
             </div>

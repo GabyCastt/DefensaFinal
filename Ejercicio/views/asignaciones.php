@@ -23,17 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
         } else {
             $mensaje = "Error al insertar la asignación.";
         }
-    } elseif ($_POST['accion'] === 'editar') {
-        $asignacion_id = $_POST['asignacion_id'];
-        $proyecto_id = $_POST['proyecto_id'];
-        $empleado_id = $_POST['empleado_id'];
-        $fecha_asignacion = $_POST['fecha_asignacion'];
-
-        if ($asignacionesController->editarAsignacion($asignacion_id, $proyecto_id, $empleado_id, $fecha_asignacion)) {
-            $mensaje = "Asignación editada correctamente.";
-        } else {
-            $mensaje = "Error al editar la asignación.";
-        }
     }
 }
 
@@ -205,56 +194,14 @@ $asignaciones = $asignacionesController->listarAsignaciones();
                     <?php foreach ($asignaciones as $asignacion): ?>
                         <tr>
                             <td><?php echo $asignacion['asignacion_id']; ?></td>
-                            <td><?php echo $asignacion['proyecto_id']; ?></td>
-                            <td><?php echo $asignacion['empleado_id']; ?></td>
+                            <td><?php echo $asignacion['nombre_proyecto']; ?></td>
+                            <td><?php echo $asignacion['nombre_empleado']; ?></td>
                             <td><?php echo $asignacion['fecha_asignacion']; ?></td>
                             <td>
-                                <!-- Botón para abrir modal de edición -->
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editarModal<?php echo $asignacion['asignacion_id']; ?>">
-                                    Editar
-                                </button>
                                 <!-- Botón para eliminar -->
                                 <a href="asignaciones.php?eliminar=<?php echo $asignacion['asignacion_id']; ?>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar esta asignación?')">Eliminar</a>
                             </td>
                         </tr>
-
-                        <!-- Modal de edición -->
-                        <div class="modal fade" id="editarModal<?php echo $asignacion['asignacion_id']; ?>" tabindex="-1" aria-labelledby="editarModalLabel<?php echo $asignacion['asignacion_id']; ?>" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form method="POST">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editarModalLabel<?php echo $asignacion['asignacion_id']; ?>">Editar Asignación</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <input type="hidden" name="accion" value="editar">
-                                            <input type="hidden" name="asignacion_id" value="<?php echo $asignacion['asignacion_id']; ?>">
-                                            <label>Proyecto:</label>
-                                            <select name="proyecto_id" class="form-control" required>
-                                                <?php foreach ($proyectos as $proyecto): ?>
-                                                    <option value="<?php echo $proyecto['proyecto_id']; ?>" <?php echo ($proyecto['proyecto_id'] == $asignacion['proyecto_id']) ? 'selected' : ''; ?>><?php echo $proyecto['nombre']; ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                            <br>
-                                            <label>Empleado:</label>
-                                            <select name="empleado_id" class="form-control" required>
-                                                <?php foreach ($empleados as $empleado): ?>
-                                                    <option value="<?php echo $empleado['empleado_id']; ?>" <?php echo ($empleado['empleado_id'] == $asignacion['empleado_id']) ? 'selected' : ''; ?>><?php echo $empleado['nombre'] . ' ' . $empleado['apellido']; ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                            <br>
-                                            <label>Fecha de Asignación:</label>
-                                            <input type="text" name="fecha_asignacion" id="fecha_asignacion_editar<?php echo $asignacion['asignacion_id']; ?>" class="form-control" value="<?php echo $asignacion['fecha_asignacion']; ?>" required>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -268,13 +215,6 @@ $asignaciones = $asignacionesController->listarAsignaciones();
             dateFormat: 'Y-m-d',
             minDate: 'today'
         });
-
-        <?php foreach ($asignaciones as $asignacion): ?>
-            flatpickr('#fecha_asignacion_editar<?php echo $asignacion['asignacion_id']; ?>', {
-                dateFormat: 'Y-m-d',
-                minDate: 'today'
-            });
-        <?php endforeach; ?>
     </script>
 </body>
 
