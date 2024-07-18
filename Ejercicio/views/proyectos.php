@@ -1,26 +1,49 @@
 <?php
 require_once '../controllers/proyectos.controller.php';
-require_once '../config/conexion.php';
 
-$conexionObj = new Clase_Conectar();
-$conexion = $conexionObj->Procedimiento_Conectar();
+$proyectosController = new ProyectosController();
 
-$controller = new ProyectosController($conexion);
+// Manejar la inserción de un nuevo proyecto
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
+    if ($_POST['accion'] === 'insertar') {
+        $nombre = $_POST['nombre'];
+        $descripcion = $_POST['descripcion'];
+        $fecha_inicio = $_POST['fecha_inicio'];
+        $fecha_fin = $_POST['fecha_fin'];
 
-// Manejar las acciones del controlador
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['crear'])) {
-        $controller->crearProyecto();
-    } elseif (isset($_POST['editar'])) {
-        $controller->editarProyecto();
-    }
-} elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    if (isset($_GET['eliminar']) && isset($_GET['proyecto_id'])) {
-        $controller->eliminarProyecto();
+        if ($proyectosController->insertarProyecto($nombre, $descripcion, $fecha_inicio, $fecha_fin)) {
+            $mensaje = "Proyecto insertado correctamente.";
+        } else {
+            $mensaje = "Error al insertar el proyecto.";
+        }
+    } elseif ($_POST['accion'] === 'editar') {
+        $proyecto_id = $_POST['proyecto_id'];
+        $nombre = $_POST['nombre'];
+        $descripcion = $_POST['descripcion'];
+        $fecha_inicio = $_POST['fecha_inicio'];
+        $fecha_fin = $_POST['fecha_fin'];
+
+        if ($proyectosController->editarProyecto($proyecto_id, $nombre, $descripcion, $fecha_inicio, $fecha_fin)) {
+            $mensaje = "Proyecto editado correctamente.";
+        } else {
+            $mensaje = "Error al editar el proyecto.";
+        }
     }
 }
 
-$proyectos = $controller->listarProyectos();
+// Manejar la eliminación de un proyecto
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['eliminar'])) {
+    $proyecto_id = $_GET['eliminar'];
+
+    if ($proyectosController->eliminarProyecto($proyecto_id)) {
+        $mensaje = "Proyecto eliminado correctamente.";
+    } else {
+        $mensaje = "Error al eliminar el proyecto.";
+    }
+}
+
+// Listar todos los proyectos
+$proyectos = $proyectosController->listarProyectos();
 ?>
 
 <!DOCTYPE html>
@@ -35,11 +58,75 @@ $proyectos = $controller->listarProyectos();
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <style>
-        /* ... (estilos sin cambios) ... */
+        .custom-flatpickr {
+            display: flex;
+            align-items: center;
+        }
+
+        .custom-flatpickr input {
+            margin-right: 5px;
+            flex: 1;
+        }
+
+        .welcome-hero {
+            background-image: linear-gradient(to bottom, #cce3de, #cce3de);
+            background-size: 100% 300px;
+            background-position: 0% 100%;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+
+        .welcome-hero h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .welcome-hero p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 4px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Spinner End -->
+
     <!-- Sidebar Start -->
     <?php require_once('./html/menu.php') ?>
     <!-- Sidebar End -->
@@ -50,178 +137,129 @@ $proyectos = $controller->listarProyectos();
         <?php require_once('./html/header.php') ?>
         <!-- Navbar End -->
 
-        <!-- Hero Section -->
-        <div class="welcome-hero">
-            <div>
-                <h1>Gestión de Proyectos</h1>
-                <p>Administra tus proyectos de manera eficiente</p>
+        <div class="container mt-5">
+            <div class="welcome-hero">
+                <div>
+                    <h1>Gestión de Asignación a Proyectos</h1>
+                    <p>Administra de manera eficiente</p>
+                </div>
             </div>
-        </div>
 
-        <!-- Formulario de creación/edición de proyectos -->
-        <div class="container mt-5">
-            <h2><?php echo isset($_GET['proyecto_id']) ? 'Editar Proyecto' : 'Crear Proyecto'; ?></h2>
-            <form id="proyectoForm" action="" method="POST">
-                <input type="hidden" name="proyecto_id" id="proyecto_id" value="<?php echo isset($_GET['proyecto_id']) ? $_GET['proyecto_id'] : ''; ?>">
-                <div class="mb-3">
-                    <label for="nombre" class="form-label">Nombre del Proyecto</label>
-                    <input type="text" class="form-control" id="nombre" name="nombre" required>
-                </div>
-                <div class="mb-3">
-                    <label for="descripcion" class="form-label">Descripción</label>
-                    <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
-                </div>
-                <div class="mb-3 custom-flatpickr">
-                    <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
-                    <input type="text" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
-                </div>
-                <div class="mb-3 custom-flatpickr">
-                    <label for="fecha_fin" class="form-label">Fecha de Fin</label>
-                    <input type="text" class="form-control" id="fecha_fin" name="fecha_fin">
-                </div>
-                <?php if (isset($_GET['proyecto_id'])): ?>
-                    <button type="submit" name="editar" class="btn btn-primary">Editar Proyecto</button>
-                <?php else: ?>
-                    <button type="submit" name="crear" class="btn btn-success">Crear Proyecto</button>
+            <div class="container mt-5">
+                <?php if (isset($mensaje)) : ?>
+                    <p><?php echo $mensaje; ?></p>
                 <?php endif; ?>
-            </form>
-        </div>
 
-        <!-- Lista de proyectos -->
-        <div class="container mt-5">
-            <h2>Lista de Proyectos</h2>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Fecha de Inicio</th>
-                        <th>Fecha de Fin</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($proyectos as $proyecto): ?>
+                <form method="POST">
+                    <h2>Insertar Proyecto</h2>
+                    <input type="hidden" name="accion" value="insertar">
+                    <label>Nombre:</label>
+                    <input type="text" name="nombre" required>
+                    <br>
+                    <label>Descripción:</label>
+                    <textarea name="descripcion" required></textarea>
+                    <br>
+                    <label>Fecha de Inicio:</label>
+                    <input type="date" name="fecha_inicio" required>
+                    <br>
+                    <label>Fecha de Fin:</label>
+                    <input type="date" name="fecha_fin">
+                    <br>
+                    <button type="submit">Insertar</button>
+                </form>
+
+                <h2>Lista de Proyectos</h2>
+                <table>
+                    <thead>
                         <tr>
-                            <td><?php echo htmlspecialchars($proyecto['proyecto_id']); ?></td>
-                            <td><?php echo htmlspecialchars($proyecto['nombre']); ?></td>
-                            <td><?php echo htmlspecialchars($proyecto['descripcion']); ?></td>
-                            <td><?php echo htmlspecialchars($proyecto['fecha_inicio']); ?></td>
-                            <td><?php echo htmlspecialchars($proyecto['fecha_fin']); ?></td>
-                            <td>
-                                <a href="?proyecto_id=<?php echo $proyecto['proyecto_id']; ?>" class="btn btn-sm btn-primary">Editar</a>
-                                <a href="?eliminar&proyecto_id=<?php echo $proyecto['proyecto_id']; ?>" class="btn btn-sm btn-danger btn-eliminar">Eliminar</a>
-                            </td>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Fecha de Inicio</th>
+                            <th>Fecha de Fin</th>
+                            <th>Acciones</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($proyectos as $proyecto) : ?>
+                            <tr>
+                                <td><?php echo $proyecto['proyecto_id']; ?></td>
+                                <td><?php echo $proyecto['nombre']; ?></td>
+                                <td><?php echo $proyecto['descripcion']; ?></td>
+                                <td><?php echo $proyecto['fecha_inicio']; ?></td>
+                                <td><?php echo $proyecto['fecha_fin']; ?></td>
+                                <td>
+                                    <a href="#" class="btn btn-primary editar-proyecto" data-bs-toggle="modal" data-bs-target="#editarProyectoModal" data-proyecto-id="<?php echo $proyecto['proyecto_id']; ?>">Editar</a>
+                                    <a href="proyectos.php?eliminar=<?php echo $proyecto['proyecto_id']; ?>" onclick="return confirm('¿Estás seguro de eliminar este proyecto?')" class="btn btn-danger">Eliminar</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+                <!-- Modal Editar Proyecto -->
+                <div class="modal fade" id="editarProyectoModal" tabindex="-1" aria-labelledby="editarProyectoModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form id="formEditarProyecto" method="POST">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editarProyectoModalLabel">Editar Proyecto</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" name="accion" value="editar">
+                                    <input type="hidden" id="proyecto_id_editar" name="proyecto_id">
+                                    <label>Nombre:</label>
+                                    <input type="text" id="nombre_editar" name="nombre" required>
+                                    <br>
+                                    <label>Descripción:</label>
+                                    <textarea id="descripcion_editar" name="descripcion" required></textarea>
+                                    <br>
+                                    <label>Fecha de Inicio:</label>
+                                    <input type="date" id="fecha_inicio_editar" name="fecha_inicio" required>
+                                    <br>
+                                    <label>Fecha de Fin:</label>
+                                    <input type="date" id="fecha_fin_editar" name="fecha_fin">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fin Modal Editar Proyecto -->
+
+            </div>
+
+            <!-- Footer Start -->
+            <?php require_once('./html/footer.php') ?>
+            <!-- Footer End -->
         </div>
+        <!-- Content End -->
 
-        <!-- Footer Start -->
-        <?php require_once('./html/footer.php') ?>
-        <!-- Footer End -->
-    </div>
-    <!-- Content End -->
+        <script>
+            $(document).ready(function () {
+                // Obtener datos del proyecto para editar
+                $('.editar-proyecto').click(function () {
+                    var proyectoId = $(this).data('proyecto-id');
+                    var proyecto = <?php echo json_encode($proyectos); ?>;
+                    var proyectoEditar = proyecto.find(p => p.proyecto_id == proyectoId);
+                    $('#proyecto_id_editar').val(proyectoEditar.proyecto_id);
+                    $('#nombre_editar').val(proyectoEditar.nombre);
+                    $('#descripcion_editar').val(proyectoEditar.descripcion);
+                    $('#fecha_inicio_editar').val(proyectoEditar.fecha_inicio);
+                    $('#fecha_fin_editar').val(proyectoEditar.fecha_fin);
+                });
 
-    <script>
-        $(document).ready(function() {
-            // Inicializar Flatpickr
-            flatpickr('#fecha_inicio', {
-                dateFormat: "Y-m-d"
-            });
-            flatpickr('#fecha_fin', {
-                dateFormat: "Y-m-d"
-            });
-
-            // Cargar datos del proyecto si estamos en modo edición
-            <?php if (isset($_GET['proyecto_id'])): ?>
-            $.ajax({
-                url: '../controllers/proyectos.controller.php',
-                type: 'GET',
-                data: { proyecto_id: <?php echo $_GET['proyecto_id']; ?> },
-                dataType: 'json',
-                success: function(proyecto) {
-                    $('#proyecto_id').val(proyecto.proyecto_id);
-                    $('#nombre').val(proyecto.nombre);
-                    $('#descripcion').val(proyecto.descripcion);
-                    $('#fecha_inicio').val(proyecto.fecha_inicio);
-                    $('#fecha_fin').val(proyecto.fecha_fin);
-                },
-                error: function() {
-                    Swal.fire('Error', 'Error al cargar los datos del proyecto.', 'error');
-                }
-            });
-            <?php endif; ?>
-
-            // Cargar proyecto si se proporciona un ID
-            <?php if (isset($_GET['proyecto_id'])): ?>
-            cargarProyecto(<?php echo $_GET['proyecto_id']; ?>);
-            <?php endif; ?>
-
-            // Manejar el envío del formulario para crear o editar un proyecto
-            $('#proyectoForm').on('submit', function(e) {
-                e.preventDefault();
-                var formData = $(this).serialize();
-                $.ajax({
-                    url: '../controllers/proyectos.controller.php',
-                    type: 'POST', 
-                    data: formData,
-                    dataType: 'json', 
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            Swal.fire('Éxito', response.message, 'success').then((result) => {
-                                if (result.isConfirmed) {
-                                    location.reload();
-                                }
-                            });
-                        } else {
-                            Swal.fire('Error', response.message, 'error');
-                        }
-                    },
-                    error: function() {
-                        Swal.fire('Error', 'Ocurrió un error al procesar la solicitud.', 'error');
-                    }
+                // Limpiar datos del formulario al cerrar modal
+                $('#editarProyectoModal').on('hidden.bs.modal', function () {
+                    $('#formEditarProyecto')[0].reset();
                 });
             });
+        </script>
 
-
-            // Manejar la eliminación de proyectos
-            $('.btn-eliminar').on('click', function(e) {
-                e.preventDefault();
-                var deleteUrl = $(this).attr('href');
-                Swal.fire({
-                    title: '¿Está seguro?',
-                    text: "Esta acción no se puede deshacer",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: deleteUrl,
-                            type: 'GET',
-                            success: function(response) {
-                                Swal.fire('Eliminado', 'El proyecto ha sido eliminado.', 'success').then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            },
-                            error: function() {
-                                Swal.fire('Error', 'Ocurrió un error al eliminar el proyecto.', 'error');
-                            }
-                        });
-                    }
-                });
-            });
-        });
-    </script>
-    
 </body>
 
 </html>

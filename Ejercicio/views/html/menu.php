@@ -14,13 +14,13 @@
                 </a>
             </li>
             <li class="nav-item w-100">
-                <a href="./grupos.php" class="nav-link text-light py-3 px-4 w-100 d-flex align-items-center">
+                <a href="./empleados.php" class="nav-link text-light py-3 px-4 w-100 d-flex align-items-center">
                     <i class="fas fa-users me-3 fs-5"></i>
                     <span>Empleados</span>
                 </a>
             </li>
             <li class="nav-item w-100">
-                <a href="./grupos.php" class="nav-link text-light py-3 px-4 w-100 d-flex align-items-center">
+                <a href="./asignaciones.php" class="nav-link text-light py-3 px-4 w-100 d-flex align-items-center">
                     <i class="fas fa-users me-3 fs-5"></i>
                     <span>Asignaciones</span>
                 </a>
