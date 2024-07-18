@@ -266,5 +266,4 @@ $proyectos = $proyectosController->listarProyectos();
         </script>
 
 </body>
-
 </html>

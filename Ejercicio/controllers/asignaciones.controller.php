@@ -31,4 +31,3 @@ class AsignacionesController
         return $this->asignacionesModel->listarAsignaciones();
     }
 }
-?>

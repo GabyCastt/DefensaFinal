@@ -1,6 +1,4 @@
 <?php
-
-// POO
 class Clase_Conectar
 {
     public $conexion;

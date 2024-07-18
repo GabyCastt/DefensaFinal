@@ -74,5 +74,5 @@
 
 
 
-        <!-- Footer Start -->
-        <?php require_once('./html/footer.php') ?>
+            <!-- Footer Start -->
+            <?php require_once('./html/footer.php') ?>

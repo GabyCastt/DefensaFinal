@@ -40,30 +40,18 @@ class Empleados
         return $result->fetch_all(MYSQLI_ASSOC);
     }
     public function listarEmpleadosPorProyecto($proyecto_id)
-{
-    $sql = "SELECT e.empleado_id, e.nombre, e.apellido, e.email, e.posicion 
+    {
+        $sql = "SELECT e.empleado_id, e.nombre, e.apellido, e.email, e.posicion 
             FROM Empleados e
             INNER JOIN Asignaciones a ON e.empleado_id = a.empleado_id
             WHERE a.proyecto_id = ?";
-    
-    // Preparar la consulta
-    $stmt = $this->conexion->prepare($sql);
-    $stmt->bind_param("i", $proyecto_id);
-    
-    // Ejecutar la consulta
-    $stmt->execute();
-    
-    // Obtener los resultados
-    $result = $stmt->get_result();
-    
-    // Obtener los datos en forma de arreglo asociativo
-    $empleados = $result->fetch_all(MYSQLI_ASSOC);
-    
-    // Cerrar la consulta
-    $stmt->close();
-    
-    // Devolver los empleados encontrados
-    return $empleados;
+
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("i", $proyecto_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $empleados = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $empleados;
+    }
 }
-}
-?>

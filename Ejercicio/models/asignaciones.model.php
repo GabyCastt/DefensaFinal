@@ -42,6 +42,4 @@ class Asignaciones
         $result = $this->conexion->query($sql);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
-
 }
-?>

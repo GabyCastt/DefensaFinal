@@ -30,3 +30,4 @@ class ProyectosController
         return $this->proyectosModel->listarProyectos();
     }
 }
+

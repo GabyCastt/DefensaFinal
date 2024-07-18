@@ -254,12 +254,12 @@ $empleados = $empleadosController->listarEmpleados();
 
     <script>
         $(document).ready(function() {
-            // Limpiar datos del formulario al cerrar modal de inserción
+            // Limpia datos del formulario al cerrar modal de inserción
             $('#nuevoEmpleadoModal').on('hidden.bs.modal', function() {
                 $('#formInsertarEmpleado')[0].reset();
             });
 
-            // Cargar datos del empleado seleccionado en el modal de edición
+            // Carga datos del empleado seleccionado en el modal de edición
             $('.editar-empleado').click(function() {
                 var empleadoId = $(this).data('empleado-id');
                 var empleadoEditar = <?php echo json_encode($empleados); ?>.find(e => e.empleado_id === empleadoId);
@@ -269,7 +269,7 @@ $empleados = $empleadosController->listarEmpleados();
                 $('#formEditarEmpleado_' + empleadoId + ' input[name="posicion"]').val(empleadoEditar.posicion);
             });
 
-            // Limpiar datos del formulario al cerrar modal de edición
+            // Limpia datos del formulario al cerrar modal de edición
             $('div.modal').on('hidden.bs.modal', function() {
                 $(this).find('form')[0].reset();
             });

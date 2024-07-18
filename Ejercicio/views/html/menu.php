@@ -5,7 +5,6 @@
                 <i class="fas fa-shield-alt me-1"></i>DEFENSA FINAL
             </h3>
         </a>
-    
         <ul class="nav flex-column w-100 mt-4">
             <li class="nav-item w-100">
                 <a href="./proyectos.php" class="nav-link text-light py-3 px-4 w-100 d-flex align-items-center">
