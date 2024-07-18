@@ -8,27 +8,21 @@
     
         <ul class="nav flex-column w-100 mt-4">
             <li class="nav-item w-100">
-                <a href="./amigos.php" class="nav-link text-light py-3 px-4 w-100 d-flex align-items-center">
+                <a href="./proyectos.php" class="nav-link text-light py-3 px-4 w-100 d-flex align-items-center">
                     <i class="fas fa-user-friends me-3 fs-5"></i>
-                    <span>Amigos</span>
+                    <span>Proyectos</span>
                 </a>
             </li>
             <li class="nav-item w-100">
                 <a href="./grupos.php" class="nav-link text-light py-3 px-4 w-100 d-flex align-items-center">
                     <i class="fas fa-users me-3 fs-5"></i>
-                    <span>Grupos</span>
+                    <span>Empleados</span>
                 </a>
             </li>
             <li class="nav-item w-100">
                 <a href="./grupos.php" class="nav-link text-light py-3 px-4 w-100 d-flex align-items-center">
                     <i class="fas fa-users me-3 fs-5"></i>
-                    <span>Grupos</span>
-                </a>
-            </li>
-            <li class="nav-item w-100">
-                <a href="./grupos.php" class="nav-link text-light py-3 px-4 w-100 d-flex align-items-center">
-                    <i class="fas fa-users me-3 fs-5"></i>
-                    <span>Grupos</span>
+                    <span>Asignaciones</span>
                 </a>
             </li>
         </ul>

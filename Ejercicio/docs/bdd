@@ -1,0 +1,26 @@
+CREATE DATABASE defensa_fin
+USE DATABASE defensa_fin
+CREATE TABLE Proyectos (
+    proyecto_id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE
+);
+
+CREATE TABLE Empleados (
+    empleado_id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    posicion VARCHAR(50)
+);
+
+CREATE TABLE Asignaciones (
+    asignacion_id INT PRIMARY KEY AUTO_INCREMENT,
+    proyecto_id INT,
+    empleado_id INT,
+    fecha_asignacion DATE NOT NULL,
+    FOREIGN KEY (proyecto_id) REFERENCES Proyectos(proyecto_id) ON DELETE CASCADE,
+    FOREIGN KEY (empleado_id) REFERENCES Empleados(empleado_id) ON DELETE CASCADE
+);

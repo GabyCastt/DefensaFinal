@@ -8,7 +8,7 @@ class Clase_Conectar
     private $server = "localhost";
     private $usu = "root";
     private $clave = "";
-    private $base = "bdd";
+    private $base = "defensa_fin";
 
     private $port = 3306;
 
